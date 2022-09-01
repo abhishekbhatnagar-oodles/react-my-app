@@ -1,39 +1,36 @@
 import ExpenseItems from "./ExpenseItems";
 import './Expenses.css';
 import ExpensesFilter from "./ExpensesFilter";
+import { useState } from "react";
 
 
 function Expenses(prop) {
+    const [filteredYear, setFilteredYear] = useState('2019')
     const filterChangeHandler = (selectedYear) => {
-        console.log('in expenses.js');
-        console.log(selectedYear);
+        // console.log('in expenses.js');
+        setFilteredYear(selectedYear);
     }
+    const filteredExpense = prop.items.filter(expense => {
+        return expense.date.getFullYear().toString() === filteredYear;
+    });
 
     return (
         <div className="expenses">
-            <ExpensesFilter onChangeFilter={filterChangeHandler} />
-            <ExpenseItems
-                title={prop.items[0].title}
-                amount={prop.items[0].amount}
-                date={prop.items[0].date}
-            />
-            <ExpenseItems
-                title={prop.items[1].title}
-                amount={prop.items[1].amount}
-                date={prop.items[1].date}
-            />
-            <ExpenseItems
-                title={prop.items[2].title}
-                amount={prop.items[2].amount}
-                date={prop.items[2].date}
-            />
-            <ExpenseItems
-                title={prop.items[3].title}
-                amount={prop.items[3].amount}
-                date={prop.items[3].date}
-            />
+            <ExpensesFilter selected={filteredYear} onChangeFilter={filterChangeHandler} />
+            {filteredExpense.length === 0 && <p>No Expense Found for this Year</p>}
+            {filteredExpense.length > 0 &&
+                filteredExpense.map((expense) => (
+                    <ExpenseItems
+                        key={expense.id}
+                        title={expense.title}
+                        amount={expense.amount}
+                        date={expense.date}
+                    />
+                ))
+            }
+
         </div>
-    );
+    )
 }
 
 export default Expenses
